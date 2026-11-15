@@ -42,10 +42,14 @@ td:last-child{text-align:right;font-weight:600;padding-left:12px}
 .err{color:var(--warn);font-size:.9rem;margin:0 0 12px}
 .cp{margin-top:12px;width:100%;font:inherit;font-weight:600;min-height:44px;border-radius:9px;border:1px solid rgba(255,255,255,.35);background:transparent;color:var(--resink);cursor:pointer}
 .steps{font-size:.8rem;opacity:.75;margin-top:10px;word-break:break-word}
+.back{margin:0 0 4px;font-size:.88rem}
+.back a{color:var(--acc);text-decoration:none;font-weight:600}
+.back a:hover{text-decoration:underline}
 </style>
 </head>
 <body>
 <main>
+<p class="back"><a href="../">← Semua kalkulator</a></p>
 <h1>Kalkulator Dosis Pestisida</h1>
 <p class="sub">Ubah dosis atau konsentrasi di label kemasan menjadi kebutuhan produk per luasan lahan.</p>
 <noscript><p class="err">Kalkulator ini membutuhkan JavaScript. Aktifkan JavaScript di browser Anda.</p></noscript>
