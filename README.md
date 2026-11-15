@@ -1,5 +1,55 @@
-# Kalkulator-
-Kalkulator pertanian 
-
 # Kalkulator Pestisida
-akses disini https://meer-sa.github.io/Kalkulator-Pertanian/
+
+Kumpulan kalkulator sederhana untuk membantu pekerjaan di lahan, dibuat sebagai halaman web statis: tanpa instalasi, tanpa server, dan nyaman dipakai di HP.
+
+## Daftar Kalkulator
+
+| Kalkulator | File | Status |
+|---|---|---|
+| Kalkulator Dosis Pestisida | [`index.html`](index.html) | Tersedia |
+
+Kalkulator lain akan ditambahkan di sini seiring waktu.
+
+## Kalkulator Dosis Pestisida
+
+Mengubah dosis atau konsentrasi di label kemasan menjadi kebutuhan produk untuk luasan lahan tertentu.
+
+### Fitur
+
+- **Formulasi**: cair (EC, SC, SL, EW, SE, ME, OD, CS, AS), padat larut air (WP, WG/WDG, DF, SP, SG), dan tabur langsung (GR, DP, RB).
+- **Empat cara input sesuai data di label**:
+  - dosis per liter air (ml/L, g/L, atau % b/v)
+  - dosis per hektar (L/ha, kg/ha, ml/ha, g/ha)
+  - target konsentrasi dalam ppm bahan aktif
+  - target dosis bahan aktif (g b.a./ha)
+- **Satuan luas**: hektar, m², are, dan ru (±14 m²).
+- **Hasil**: total produk, konsentrasi larutan, dosis per hektar, total air, jumlah tangki, dan produk per tangki. Untuk formulasi tabur ditampilkan dosis per hektar, per m², dan per ru.
+- Rumus perhitungan ditampilkan di bawah hasil, dan hasil bisa disalin dengan satu tombol.
+- Tampilan terang/gelap otomatis mengikuti pengaturan perangkat.
+
+### Rumus
+
+| Mode | Rumus |
+|---|---|
+| Dosis per liter | dosis/ha = dosis per liter × volume semprot (L/ha) |
+| Dosis per hektar | dosis per liter = dosis/ha ÷ volume semprot (L/ha) |
+| Target ppm b.a. | produk per liter = ppm ÷ kandungan b.a. (mg/ml atau mg/g) |
+| Target g b.a./ha | produk/ha = g b.a./ha × 1000 ÷ kandungan b.a. (mg/ml atau mg/g) |
+
+Catatan konversi: 1% b/v = 10 ml/L (cair) atau 10 g/L (padat); kandungan 1 g/L sama dengan 1 mg/ml; kandungan 1% b/b sama dengan 10 mg/g.
+
+### Contoh
+
+Label menganjurkan 2 ml/L, volume semprot 400 L/ha, lahan 1 ha, tangki 16 L:
+
+- total produk: 800 ml
+- total air: 400 L (25 tangki)
+- produk per tangki: 32 ml
+
+## Catatan Penting
+
+Alat ini hanya membantu berhitung. Dosis, waktu aplikasi, interval panen, alat pelindung diri, dan cara aplikasi tetap mengikuti **label resmi produk** dan anjuran penyuluh atau instansi setempat. Periksa kembali hasil hitungan sebelum digunakan, dan kalibrasi sprayer Anda agar volume semprot akurat.
+
+## Lisensi
+
+Dirilis dengan lisensi [MIT](LICENSE). Anda bebas memakai, menyalin, dan mengembangkan kode ini, dengan tetap mencantumkan pemberitahuan hak cipta dan lisensinya.
