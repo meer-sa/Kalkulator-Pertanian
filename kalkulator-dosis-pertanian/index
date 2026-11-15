@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Kalkulator dosis pestisida: ubah dosis atau konsentrasi di label kemasan menjadi kebutuhan produk per luasan lahan.">
+<meta name="theme-color" content="#1e6a3b">
+<title>Kalkulator Dosis Pestisida</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌱%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;--bg:#eaf0e8;--card:#fbfdf9;--ink:#15251b;--mut:#5d6f63;--line:#cbd8c9;--acc:#1e6a3b;--accink:#fff;--res:#15331f;--resink:#eaf6e9;--warn:#8a5a00}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0f1a13;--card:#17251c;--ink:#e5f0e4;--mut:#93a998;--line:#2b4033;--acc:#5fc17f;--accink:#08170d;--res:#0b2415;--resink:#e5f5e4;--warn:#e0b24d}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0f1a13;--card:#17251c;--ink:#e5f0e4;--mut:#93a998;--line:#2b4033;--acc:#5fc17f;--accink:#08170d;--res:#0b2415;--resink:#e5f5e4;--warn:#e0b24d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.45}
+main{max-width:560px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top,0px)) 14px calc(40px + env(safe-area-inset-bottom,0px))}
+h1{font-size:1.6rem;font-weight:800;margin:6px 0 2px;letter-spacing:-.02em}
+.sub{color:var(--mut);margin:0 0 16px;font-size:.92rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+label,.lbl{display:block;font-size:.85rem;font-weight:600;margin:10px 0 4px}
+label:first-child,.lbl:first-child{margin-top:0}
+.hint{font-weight:400;color:var(--mut)}
+input,select{width:100%;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:10px;min-height:44px}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row.r21{grid-template-columns:2fr 1.2fr}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.seg button{font:inherit;font-size:.86rem;padding:9px 8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:9px;min-height:44px;cursor:pointer;text-align:left}
+.seg button[aria-pressed="true"]{background:var(--acc);color:var(--accink);border-color:var(--acc);font-weight:600}
+.seg button[disabled]{opacity:.4;cursor:not-allowed}
+.note{font-size:.82rem;color:var(--mut);margin:8px 0 0}
+.res{background:var(--res);color:var(--resink);border-radius:14px;padding:16px;margin-bottom:12px}
+.big{font-size:2.2rem;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.big small{font-size:1rem;font-weight:600;opacity:.8}
+.cap{font-size:.85rem;opacity:.8;margin-bottom:2px}
+table{width:100%;border-collapse:collapse;margin-top:12px;font-size:.92rem}
+td{padding:7px 0;border-top:1px solid rgba(255,255,255,.16)}
+td:last-child{text-align:right;font-weight:600;padding-left:12px}
+.err{color:var(--warn);font-size:.9rem;margin:0 0 12px}
+.cp{margin-top:12px;width:100%;font:inherit;font-weight:600;min-height:44px;border-radius:9px;border:1px solid rgba(255,255,255,.35);background:transparent;color:var(--resink);cursor:pointer}
+.steps{font-size:.8rem;opacity:.75;margin-top:10px;word-break:break-word}
+</style>
+</head>
+<body>
+<main>
+<h1>Kalkulator Dosis Pestisida</h1>
+<p class="sub">Ubah dosis atau konsentrasi di label kemasan menjadi kebutuhan produk per luasan lahan.</p>
+<noscript><p class="err">Kalkulator ini membutuhkan JavaScript. Aktifkan JavaScript di browser Anda.</p></noscript>
+
+<div class="card">
+  <label for="form">Formulasi</label>
+  <select id="form"></select>
+  <p class="note" id="fnote"></p>
+
+  <div class="lbl" id="lmode">Data yang tersedia di label</div>
+  <div class="seg" id="mode" role="group" aria-labelledby="lmode"></div>
+
+  <label id="lvalue" for="val"></label>
+  <div class="row r21">
+    <input id="val" type="number" inputmode="decimal" min="0" step="any" value="2">
+    <select id="unit" aria-label="Satuan dosis"></select>
+  </div>
+
+  <div id="contentBox" hidden>
+    <label for="content">Kandungan bahan aktif di kemasan</label>
+    <div class="row r21">
+      <input id="content" type="number" inputmode="decimal" min="0" step="any" value="100">
+      <select id="cunit" aria-label="Satuan kandungan bahan aktif"></select>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <label for="area">Luas lahan</label>
+  <div class="row r21">
+    <input id="area" type="number" inputmode="decimal" min="0" step="any" value="1">
+    <select id="aunit" aria-label="Satuan luas">
+      <option value="1">hektar (ha)</option>
+      <option value="0.0001">m²</option>
+      <option value="0.01">are (100 m²)</option>
+      <option value="0.0014">ru (±14 m²)</option>
+    </select>
+  </div>
+  <div id="waterBox">
+    <div class="row">
+      <div><label for="vol">Volume semprot <span class="hint">(L/ha)</span></label><input id="vol" type="number" inputmode="decimal" min="0" step="any" value="400"></div>
+      <div><label for="tank">Isi tangki <span class="hint">(L)</span></label><input id="tank" type="number" inputmode="decimal" min="0" step="any" value="16"></div>
+    </div>
+    <p class="note">Volume semprot dipakai untuk mengubah dosis per liter dan dosis per hektar. Kalibrasi sprayer Anda untuk angka yang akurat.</p>
+  </div>
+</div>
+
+<div id="out" aria-live="polite"></div>
+<p class="note">Alat bantu hitung. Dosis, waktu, dan alat aplikasi tetap mengikuti label resmi dan anjuran setempat.</p>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const FORMS=[
+ {g:"Cair (dilarutkan/dicampur air)",items:[
+  ["EC","Emulsifiable Concentrate","l"],["SC","Suspension Concentrate","l"],["SL","Soluble Liquid","l"],
+  ["EW","Emulsion, oil in water","l"],["SE","Suspo-emulsion","l"],["ME","Micro-emulsion","l"],
+  ["OD","Oil Dispersion","l"],["CS","Capsule Suspension","l"],["AS","Aqueous Suspension","l"]]},
+ {g:"Padat (dilarutkan/dicampur air)",items:[
+  ["WP","Wettable Powder","s"],["WG / WDG","Water Dispersible Granule","s"],["DF","Dry Flowable","s"],
+  ["SP","Soluble Powder","s"],["SG","Soluble Granule","s"]]},
+ {g:"Ditabur/langsung (tanpa air)",items:[
+  ["GR","Granul","d"],["DP","Dust / tepung tabur","d"],["RB","Umpan siap pakai","d"]]}
+];
+const MODES=[["perL","Dosis per liter air"],["perHa","Dosis per hektar"],["ppm","Target ppm b.a."],["aiHa","Target g b.a./ha"]];
+const DEF={perL:2,perHa:1,ppm:500,aiHa:100}; // nilai awal tiap mode
+const info={};
+let mode="perL",lastMode=null,lastText="";
+
+FORMS.forEach(g=>{const o=document.createElement("optgroup");o.label=g.g;
+ g.items.forEach(i=>{info[i[0]]=i;const op=document.createElement("option");op.value=i[0];op.textContent=i[0]+" – "+i[1];o.appendChild(op)});
+ $("form").appendChild(o)});
+$("form").value="EC";
+$("mode").innerHTML=MODES.map(m=>`<button type="button" data-m="${m[0]}">${m[1]}</button>`).join("");
+$("mode").addEventListener("click",e=>{const b=e.target.closest("button");if(!b||b.disabled)return;mode=b.dataset.m;setup();calc()});
+
+// ---------- format angka (koma desimal ala Indonesia) ----------
+function trim(v,d){const s=(+v).toFixed(d);return(s.includes(".")?s.replace(/\.?0+$/,""):s).replace(".",",")}
+function num(x,d=1){return trim(x,d)}                                   // desimal tetap, nol belakang dibuang
+function sg(x){const v=+(+x).toPrecision(3);return trim(v,v<1?4:2)}    // 3 angka penting
+function fmtP(x,u){ // x dalam satuan dasar (ml atau g) -> {v, u}
+  if(!isFinite(x))return null;
+  x=+x.toPrecision(3);
+  const big=x>=1000,v=big?x/1000:x;
+  return{v:trim(v,v<0.1?4:v<1?3:2),u:u==="ml"?(big?"L":"ml"):(big?"kg":"g")};
+}
+function fmt(x,u){const r=fmtP(x,u);return r?r.v+" "+r.u:"–"}
+
+function type(){return info[$("form").value][2]}
+function setup(){
+  const t=type(),dry=t==="d",liq=t==="l";
+  $("fnote").textContent=dry?"Formulasi ini tidak dicampur air; hitungan hanya per luasan.":liq?"Formulasi cair: hasil dalam ml atau liter produk.":"Formulasi padat: hasil dalam gram atau kilogram produk.";
+  if(dry&&(mode==="perL"||mode==="ppm"))mode="perHa";
+  if(mode!==lastMode){$("val").value=DEF[mode];lastMode=mode}
+  document.querySelectorAll("#mode button").forEach(b=>{
+    b.setAttribute("aria-pressed",b.dataset.m===mode);
+    b.disabled=dry&&(b.dataset.m==="perL"||b.dataset.m==="ppm");
+  });
+  $("waterBox").hidden=dry;
+  const P=liq?"ml":"g",K=liq?"L":"kg";
+  let lab,units;
+  if(mode==="perL"){lab="Dosis di label";units=[[1,P+"/L air"],[10,liq?"% b/v (mis. 0,2%)":"% b/v"]]}
+  if(mode==="perHa"){lab="Dosis di label";units=[[1000,K+"/ha"],[1,P+"/ha"]]}
+  if(mode==="ppm"){lab="Konsentrasi target dalam larutan semprot";units=[[1,"ppm (mg b.a./L)"]]}
+  if(mode==="aiHa"){lab="Dosis bahan aktif target";units=[[1,"g b.a./ha"],[1000,"kg b.a./ha"]]}
+  $("lvalue").textContent=lab;
+  $("unit").innerHTML=units.map(u=>`<option value="${u[0]}">${u[1]}</option>`).join("");
+  const needAI=mode==="ppm"||mode==="aiHa";
+  $("contentBox").hidden=!needAI;
+  if(needAI)$("cunit").innerHTML=liq?`<option value="1">g/L</option><option value="10">% b/v</option>`:`<option value="10">% b/b</option>`;
+}
+$("form").addEventListener("change",()=>{setup();calc()});
+document.addEventListener("input",e=>{if(e.target.id!=="form")calc()});
+
+function calc(){
+  const t=type(),dry=t==="d",liq=t==="l",P=liq?"ml":"g",F=$("form").value;
+  const val=+$("val").value,uf=+$("unit").value,areaIn=+$("area").value,area=areaIn*(+$("aunit").value);
+  const vol=+$("vol").value,tank=+$("tank").value,cont=(+$("content").value)*(+$("cunit").value);
+  const out=$("out");lastText="";
+  if(!(val>0)||!(area>0)){out.innerHTML=`<p class="err">Isi dosis dan luas lahan dengan angka lebih dari 0.</p>`;return}
+  if(!dry&&!(vol>0)){out.innerHTML=`<p class="err">Isi volume semprot (L/ha).</p>`;return}
+  if((mode==="ppm"||mode==="aiHa")&&!(cont>0)){out.innerHTML=`<p class="err">Isi kandungan bahan aktif di kemasan.</p>`;return}
+  // cont: mg b.a. per ml (cair, = g/L) atau mg b.a. per g (padat, % × 10)
+  let perL=null,perHa=null,steps="";
+  if(mode==="perL"){
+    perL=val*uf; // 1% = 10 ml/L atau 10 g/L
+    perHa=perL*vol;
+    steps=`${sg(perL)} ${P}/L × ${num(vol,1)} L/ha = ${fmt(perHa,P)}/ha`;
+  }else if(mode==="perHa"){
+    perHa=val*uf; perL=dry?null:perHa/vol;
+    steps=dry?`${fmt(perHa,P)}/ha × ${sg(areaIn*(+$("aunit").value))} ha`:`${fmt(perHa,P)}/ha ÷ ${num(vol,1)} L/ha = ${sg(perL)} ${P}/L`;
+  }else if(mode==="ppm"){
+    perL=val/cont; perHa=perL*vol;
+    steps=`${sg(val)} ppm ÷ ${sg(cont)} ${liq?"mg/ml":"mg/g"} = ${sg(perL)} ${P}/L`;
+  }else{
+    const gai=val*uf; // g b.a./ha
+    perHa=gai*1000/cont; // ml atau g produk/ha
+    perL=dry?null:perHa/vol;
+    steps=`${sg(gai)} g b.a./ha × 1000 ÷ ${sg(cont)} ${liq?"mg/ml":"mg/g"} = ${fmt(perHa,P)}/ha`;
+  }
+  const total=perHa*area;
+  let rows;
+  if(dry){
+    rows=[["Dosis per hektar",fmt(perHa,P)],["Per m²",fmt(perHa/10000,P)],["Per ru (±14 m²)",fmt(perHa*0.0014,P)]];
+  }else{
+    const water=vol*area,okTank=tank>0,tanks=okTank?water/tank:NaN,perTank=perL*tank;
+    const tanksTxt=!okTank?"–":Math.abs(tanks-Math.round(tanks))<1e-9?num(Math.round(tanks),0):num(tanks,1)+" (bulatkan "+Math.ceil(tanks-1e-9)+")";
+    rows=[["Konsentrasi produk",`${sg(perL)} ${P}/L (${sg(perL/10)}%)`],
+          ["Dosis per hektar",fmt(perHa,P)],
+          ["Total air",`${num(water,water>=100?0:1)} L`],
+          ["Jumlah tangki",tanksTxt],
+          [okTank?`Produk per tangki ${num(tank,1)} L`:"Produk per tangki",okTank?fmt(perTank,P):"–"]];
+  }
+  const unitName=$("aunit").selectedOptions[0].text.split(" ")[0];
+  const cap=`Total produk untuk ${num(areaIn,2)} ${unitName}`;
+  const T=fmtP(total,P);
+  out.innerHTML=`<div class="res"><div class="cap">${cap}</div>
+   <div class="big">${T.v} <small>${T.u} ${F}</small></div>
+   <table>${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("")}</table>
+   <div class="steps">${steps}</div><button type="button" class="cp" id="copy">Salin hasil</button></div>`;
+  lastText=[`Kalkulator Dosis Pestisida (${F})`,`${cap}: ${T.v} ${T.u} ${F}`,...rows.map(r=>`${r[0]}: ${r[1]}`),steps].join("\n");
+}
+$("out").addEventListener("click",async e=>{
+  if(e.target.id!=="copy"||!lastText)return;
+  const t=lastText;
+  try{await navigator.clipboard.writeText(t)}catch(_){const a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy")}catch(_){}a.remove()}
+  const b=e.target;b.textContent="Tersalin";setTimeout(()=>{b.textContent="Salin hasil"},1500);
+});
+setup();calc();
+</script>
+</body>
+</html>
