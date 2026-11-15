@@ -7,6 +7,7 @@ Kumpulan kalkulator sederhana untuk membantu pekerjaan di lahan, dibuat sebagai 
 | Kalkulator | File | Status |
 |---|---|---|
 | Kalkulator Dosis Pestisida | [`index.html`](index.html) | Tersedia |
+| Kalkulator Populasi Tanaman | [`populasi-tanaman/index.html`](populasi-tanaman/index.html) | Tersedia |
 
 Kalkulator lain akan ditambahkan di sini seiring waktu.
 
@@ -45,6 +46,30 @@ Label menganjurkan 2 ml/L, volume semprot 400 L/ha, lahan 1 ha, tangki 16 L:
 - total produk: 800 ml
 - total air: 400 L (25 tangki)
 - produk per tangki: 32 ml
+
+## Kalkulator Populasi Tanaman
+
+Menghitung populasi tanaman per hektare dari jarak tanam, lalu menampilkannya dalam berbagai satuan luas.
+
+### Fitur
+
+- **Pola tanam**: persegi panjang, segitiga sama sisi, jajar legowo (n:1), dan bedengan.
+- **Isian tambahan**: tanaman per lubang, lahan efektif (%), dan cadangan sulam (%).
+- **Satuan luas**: hektare, are, m², bata/ru (14 m²), dan bau (7.096,5 m²).
+- **Hasil**: populasi per hektare, per m², per are, per bata/ru, per bau, total tanaman untuk luas lahan Anda, dan kebutuhan bibit termasuk sulam.
+
+### Rumus
+
+| Pola | Lubang tanam per hektare |
+|---|---|
+| Persegi panjang | 10.000 ÷ (jarak antar baris × jarak dalam baris) |
+| Segitiga sama sisi | 10.000 ÷ (0,866 × jarak²) |
+| Jajar legowo n:1 | 10.000 × n ÷ (((n − 1) × jarak antar baris + lebar lorong) × jarak dalam baris) |
+| Bedengan | 10.000 × baris ÷ ((lebar bedengan + lebar parit) × jarak dalam baris) |
+
+Semua jarak dalam meter. Lebar lorong bawaan pada legowo adalah 2× jarak antar baris. Populasi = lubang tanam × tanaman per lubang × lahan efektif.
+
+Contoh: legowo 2:1 dengan jarak 25 × 12,5 cm menghasilkan 213.333 tanaman/ha, dan legowo 4:1 dengan jarak yang sama menghasilkan 256.000 tanaman/ha.
 
 ## Catatan Penting
 
