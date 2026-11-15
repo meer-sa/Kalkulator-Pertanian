@@ -1,13 +1,15 @@
-# Kalkulator Pestisida
+# Kalkulator Pertanian
 
 Kumpulan kalkulator sederhana untuk membantu pekerjaan di lahan, dibuat sebagai halaman web statis: tanpa instalasi, tanpa server, dan nyaman dipakai di HP.
 
 ## Daftar Kalkulator
 
-| Kalkulator | File | Status |
-|---|---|---|
-| Kalkulator Dosis Pestisida | [`index.html`](index.html) | Tersedia |
-| Kalkulator Populasi Tanaman | [`populasi-tanaman/index.html`](populasi-tanaman/index.html) | Tersedia |
+| Kalkulator | Buka online | File | Status |
+|---|---|---|---|
+| Kalkulator Dosis Pestisida | [Buka](https://meer-sa.github.io/Kalkulator-Pertanian/dosis-pestisida/) | [`dosis-pestisida/index.html`](dosis-pestisida/index.html) | Tersedia |
+| Kalkulator Populasi Tanaman | [Buka](https://meer-sa.github.io/Kalkulator-Pertanian/populasi-tanaman/) | [`populasi-tanaman/index.html`](populasi-tanaman/index.html) | Tersedia |
+
+Menu semua kalkulator: https://meer-sa.github.io/Kalkulator-Pertanian/
 
 Kalkulator lain akan ditambahkan di sini seiring waktu.
 
@@ -70,6 +72,35 @@ Menghitung populasi tanaman per hektare dari jarak tanam, lalu menampilkannya da
 Semua jarak dalam meter. Lebar lorong bawaan pada legowo adalah 2× jarak antar baris. Populasi = lubang tanam × tanaman per lubang × lahan efektif.
 
 Contoh: legowo 2:1 dengan jarak 25 × 12,5 cm menghasilkan 213.333 tanaman/ha, dan legowo 4:1 dengan jarak yang sama menghasilkan 256.000 tanaman/ha.
+
+## Cara Menjalankan
+
+Buka kalkulatornya lewat tautan di tabel **Daftar Kalkulator**, atau buka file `index.html` di folder kalkulator yang diinginkan langsung di browser. Tidak ada proses build maupun dependensi.
+
+Repository ini dipublikasikan lewat GitHub Pages (**Settings → Pages → Deploy from a branch → `main` / `(root)`**) di alamat https://meer-sa.github.io/Kalkulator-Pertanian/.
+
+Font dimuat dari Google Fonts. Tanpa koneksi internet, halaman tetap berfungsi dengan font bawaan perangkat.
+
+## Struktur Repository
+
+Setiap kalkulator dibuat sebagai satu file HTML mandiri (HTML, CSS, dan JavaScript dalam satu file) di foldernya sendiri:
+
+```
+Kalkulator-Pertanian/
+├── index.html              # menu pilihan kalkulator
+├── dosis-pestisida/
+│   └── index.html
+├── populasi-tanaman/
+│   └── index.html
+├── README.md
+└── LICENSE
+```
+
+## Menambah Kalkulator Baru
+
+1. Buat folder baru berisi `index.html`, misalnya `kalkulator-baru/index.html`.
+2. Di `index.html` root, salin satu blok tautan kalkulator (`<a class="item" ...>`), lalu ganti `href`, judul, dan deskripsinya.
+3. Perbarui tabel **Daftar Kalkulator** di atas.
 
 ## Catatan Penting
 
