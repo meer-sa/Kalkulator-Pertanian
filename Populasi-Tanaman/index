@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Kalkulator populasi tanaman: hitung jumlah tanaman per hektare dan per berbagai satuan luas dari jarak tanam.">
+<meta name="theme-color" content="#1e6a3b">
+<title>Kalkulator Populasi Tanaman</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌱%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;--bg:#eaf0e8;--card:#fbfdf9;--ink:#15251b;--mut:#5d6f63;--line:#cbd8c9;--acc:#1e6a3b;--accink:#fff;--res:#15331f;--resink:#eaf6e9;--warn:#8a5a00}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0f1a13;--card:#17251c;--ink:#e5f0e4;--mut:#93a998;--line:#2b4033;--acc:#5fc17f;--accink:#08170d;--res:#0b2415;--resink:#e5f5e4;--warn:#e0b24d}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0f1a13;--card:#17251c;--ink:#e5f0e4;--mut:#93a998;--line:#2b4033;--acc:#5fc17f;--accink:#08170d;--res:#0b2415;--resink:#e5f5e4;--warn:#e0b24d}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.45}
+main{max-width:560px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top,0px)) 14px calc(40px + env(safe-area-inset-bottom,0px))}
+h1{font-size:1.6rem;font-weight:800;margin:6px 0 2px;letter-spacing:-.02em}
+.sub{color:var(--mut);margin:0 0 16px;font-size:.92rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+label,.lbl{display:block;font-size:.85rem;font-weight:600;margin:10px 0 4px}
+label:first-child,.lbl:first-child{margin-top:0}
+.hint{font-weight:400;color:var(--mut)}
+input,select{width:100%;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:10px;min-height:44px}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row.r21{grid-template-columns:2fr 1.2fr}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.seg button{font:inherit;font-size:.86rem;padding:9px 8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:9px;min-height:44px;cursor:pointer;text-align:left}
+.seg button[aria-pressed="true"]{background:var(--acc);color:var(--accink);border-color:var(--acc);font-weight:600}
+.note{font-size:.82rem;color:var(--mut);margin:8px 0 0}
+.res{background:var(--res);color:var(--resink);border-radius:14px;padding:16px;margin-bottom:12px}
+.big{font-size:2.2rem;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.big small{font-size:1rem;font-weight:600;opacity:.8}
+.cap{font-size:.85rem;opacity:.8;margin-bottom:2px}
+table{width:100%;border-collapse:collapse;margin-top:12px;font-size:.92rem}
+td{padding:7px 0;border-top:1px solid rgba(255,255,255,.16)}
+td:last-child{text-align:right;font-weight:600;padding-left:12px}
+.err{color:var(--warn);font-size:.9rem;margin:0 0 12px}
+.cp{margin-top:12px;width:100%;font:inherit;font-weight:600;min-height:44px;border-radius:9px;border:1px solid rgba(255,255,255,.35);background:transparent;color:var(--resink);cursor:pointer}
+.steps{font-size:.8rem;opacity:.75;margin-top:10px;word-break:break-word}
+</style>
+</head>
+<body>
+<main>
+<h1>Kalkulator Populasi Tanaman</h1>
+<p class="sub">Hitung jumlah tanaman per hektare dan per berbagai satuan luas dari jarak tanam.</p>
+<noscript><p class="err">Kalkulator ini membutuhkan JavaScript. Aktifkan JavaScript di browser Anda.</p></noscript>
+
+<div class="card">
+  <div class="lbl" id="lpat">Pola tanam</div>
+  <div class="seg" id="pat" role="group" aria-labelledby="lpat"></div>
+  <p class="note" id="pnote"></p>
+
+  <label for="du">Satuan jarak</label>
+  <select id="du">
+    <option value="cm">sentimeter (cm)</option>
+    <option value="m">meter (m)</option>
+  </select>
+
+  <div class="row" style="margin-top:2px">
+    <div class="fld" data-p="rect legowo"><label for="a">Jarak antar baris <span class="hint">(<span class="u">cm</span>)</span></label><input id="a" type="number" inputmode="decimal" min="0" step="any"></div>
+    <div class="fld" data-p="rect legowo"><label for="b">Jarak dalam baris <span class="hint">(<span class="u">cm</span>)</span></label><input id="b" type="number" inputmode="decimal" min="0" step="any"></div>
+    <div class="fld" data-p="tri"><label for="s">Jarak antar tanaman <span class="hint">(<span class="u">cm</span>)</span></label><input id="s" type="number" inputmode="decimal" min="0" step="any"></div>
+    <div class="fld" data-p="legowo"><label for="n">Baris per kelompok <span class="hint">(n pada n:1)</span></label><input id="n" type="number" inputmode="numeric" min="2" step="1"></div>
+    <div class="fld" data-p="legowo"><label for="L">Lebar lorong <span class="hint">(<span class="u">cm</span>, kosong = 2× jarak baris)</span></label><input id="L" type="number" inputmode="decimal" min="0" step="any"></div>
+    <div class="fld" data-p="bed"><label for="w">Lebar bedengan <span class="hint">(<span class="u">cm</span>)</span></label><input id="w" type="number" inputmode="decimal" min="0" step="any"></div>
+    <div class="fld" data-p="bed"><label for="p">Lebar parit antar bedengan <span class="hint">(<span class="u">cm</span>)</span></label><input id="p" type="number" inputmode="decimal" min="0" step="any"></div>
+    <div class="fld" data-p="bed"><label for="r">Baris per bedengan</label><input id="r" type="number" inputmode="numeric" min="1" step="1"></div>
+    <div class="fld" data-p="bed"><label for="bb">Jarak dalam baris <span class="hint">(<span class="u">cm</span>)</span></label><input id="bb" type="number" inputmode="decimal" min="0" step="any"></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="row">
+    <div><label for="ph">Tanaman per lubang</label><input id="ph" type="number" inputmode="decimal" min="0" step="any" value="1"></div>
+    <div><label for="eff">Lahan efektif <span class="hint">(%)</span></label><input id="eff" type="number" inputmode="decimal" min="0" max="100" step="any" value="100"></div>
+  </div>
+  <p class="note">Lahan efektif: bagian lahan yang benar-benar ditanami, di luar pematang, jalan, dan saluran.</p>
+
+  <label for="sul">Cadangan sulam <span class="hint">(% bibit tambahan)</span></label>
+  <input id="sul" type="number" inputmode="decimal" min="0" step="any" value="10">
+
+  <label for="area">Luas lahan</label>
+  <div class="row r21">
+    <input id="area" type="number" inputmode="decimal" min="0" step="any" value="1">
+    <select id="aunit" aria-label="Satuan luas"></select>
+  </div>
+</div>
+
+<div id="out" aria-live="polite"></div>
+<p class="note">Alat bantu hitung. Jarak tanam dan populasi yang dianjurkan tetap mengikuti rekomendasi varietas dan anjuran setempat.</p>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const PATS=[["rect","Persegi panjang"],["tri","Segitiga sama sisi"],["legowo","Jajar legowo"],["bed","Bedengan"]];
+const NOTE={
+ rect:"Baris sejajar dengan jarak antar baris × jarak dalam baris (mis. jagung 75 × 20 cm).",
+ tri:"Tanaman berselang-seling membentuk segitiga sama sisi; semua jarak antar tanaman sama.",
+ legowo:"Beberapa baris dirapatkan lalu diselingi lorong kosong. Lorong bawaan 2× jarak antar baris (mis. legowo 2:1 padi 25 × 12,5 cm).",
+ bed:"Untuk hortikultura (cabai, tomat, dsb.): populasi dihitung dari lebar bedengan + parit."
+};
+const DEF={rect:{a:75,b:20},tri:{s:30},legowo:{a:25,b:12.5,n:2,L:""},bed:{w:100,p:50,r:2,bb:50}};
+const LEN=["a","b","s","L","w","p","bb"]; // isian berupa panjang (ikut satuan jarak)
+const AREAS=[["ha","hektare",10000],["are","are",100],["m2","m²",1],["bata","bata / ru",14],["bau","bau",7096.5]];
+let pat="rect",lastU="cm",lastText="";
+
+$("pat").innerHTML=PATS.map(p=>`<button type="button" data-p="${p[0]}">${p[1]}</button>`).join("");
+$("aunit").innerHTML=AREAS.map(a=>`<option value="${a[0]}">${a[1]}${a[2]?" ("+(a[2]===1?"":a[2]===10000?"10.000 m²":a[2]===7096.5?"7.096,5 m²":a[2]+" m²")+")":""}</option>`).join("").replace("m² ()","m²");
+$("aunit").value="ha";
+
+function fmt(x,d=0){ // koma desimal, titik ribuan, nol belakang dibuang
+  let s=(+x).toFixed(d);let[i,f]=s.split(".");
+  i=i.replace(/\B(?=(\d{3})+(?!\d))/g,".");
+  if(f)f=f.replace(/0+$/,"");
+  return f?i+","+f:i;
+}
+function cnt(x){return x>=100?fmt(x,0):x>=10?fmt(x,1):fmt(x,2)}
+
+function applyDef(){
+  const m=$("du").value==="m";
+  const d=DEF[pat];
+  for(const k in d){let v=d[k];if(v!==""&&m&&LEN.includes(k))v=+(v/100).toPrecision(8);$(k).value=v}
+}
+function setup(){
+  document.querySelectorAll("#pat button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.p===pat));
+  $("pnote").textContent=NOTE[pat];
+  document.querySelectorAll(".fld").forEach(f=>f.hidden=!f.dataset.p.split(" ").includes(pat));
+  document.querySelectorAll(".u").forEach(e=>e.textContent=$("du").value);
+}
+$("pat").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;pat=b.dataset.p;applyDef();setup();calc()});
+$("du").addEventListener("change",()=>{
+  const nu=$("du").value;if(nu===lastU)return;
+  const k=nu==="m"?0.01:100;
+  LEN.forEach(id=>{const el=$(id);if(el.value!=="")el.value=+(+el.value*k).toPrecision(8)});
+  lastU=nu;setup();calc();
+});
+document.addEventListener("input",e=>{if(e.target.id!=="du")calc()});
+
+function calc(){
+  const out=$("out");lastText="";
+  const m=$("du").value==="m"?1:0.01; // meter per satuan jarak
+  const g=id=>+$(id).value;
+  const perHole=g("ph"),eff=g("eff"),sul=g("sul")||0,areaIn=g("area");
+  const showErr=t=>{out.innerHTML=`<p class="err">${t}</p>`};
+  let holes,formula;
+  if(pat==="rect"){
+    const a=g("a")*m,b=g("b")*m;
+    if(!(a>0&&b>0))return showErr("Isi jarak antar baris dan jarak dalam baris dengan angka lebih dari 0.");
+    holes=10000/(a*b);
+    formula=`10.000 m² ÷ (${fmt(a,4)} m × ${fmt(b,4)} m) = ${fmt(holes,0)} lubang/ha`;
+  }else if(pat==="tri"){
+    const s=g("s")*m;
+    if(!(s>0))return showErr("Isi jarak antar tanaman dengan angka lebih dari 0.");
+    holes=10000/(s*s*Math.sqrt(3)/2);
+    formula=`10.000 m² ÷ (0,866 × (${fmt(s,4)} m)²) = ${fmt(holes,0)} lubang/ha`;
+  }else if(pat==="legowo"){
+    const a=g("a")*m,b=g("b")*m,n=g("n"),Lin=g("L")*m;
+    if(!(a>0&&b>0))return showErr("Isi jarak antar baris dan jarak dalam baris dengan angka lebih dari 0.");
+    if(!(n>=2)||!Number.isInteger(n))return showErr("Baris per kelompok minimal 2 (bilangan bulat), mis. 2 untuk legowo 2:1.");
+    const L=Lin>0?Lin:2*a,W=(n-1)*a+L;
+    holes=10000*n/(W*b);
+    formula=`10.000 m² × ${n} baris ÷ (lebar kelompok ${fmt(W,4)} m × ${fmt(b,4)} m) = ${fmt(holes,0)} lubang/ha`;
+  }else{
+    const w=g("w")*m,p=g("p")*m,r=g("r"),b=g("bb")*m;
+    if(!(w>0&&b>0)||!(p>=0)||$("p").value==="")return showErr("Isi lebar bedengan, lebar parit (boleh 0), dan jarak dalam baris.");
+    if(!(r>=1)||!Number.isInteger(r))return showErr("Baris per bedengan minimal 1 (bilangan bulat).");
+    holes=10000*r/((w+p)*b);
+    formula=`10.000 m² × ${r} baris ÷ ((${fmt(w,4)} + ${fmt(p,4)}) m × ${fmt(b,4)} m) = ${fmt(holes,0)} lubang/ha`;
+  }
+  if(!(perHole>0))return showErr("Isi tanaman per lubang dengan angka lebih dari 0.");
+  if(!(eff>0&&eff<=100))return showErr("Lahan efektif harus lebih dari 0 dan paling besar 100%.");
+  if(!(areaIn>0))return showErr("Isi luas lahan dengan angka lebih dari 0.");
+  const au=AREAS.find(x=>x[0]===$("aunit").value);
+  const unitM2=au[2];
+
+  const lubangHa=holes*eff/100,ha=lubangHa*perHole;
+  const land=ha*areaIn*unitM2/10000;
+  const unitName=au[1];
+  const rows=[
+    ["Lubang tanam per ha",fmt(lubangHa,0)],
+    ["Luas per lubang tanam",fmt(10000/holes,4)+" m²"],
+    ["Per m²",fmt(ha/10000,2)],
+    ["Per are (100 m²)",cnt(ha/100)],
+    ["Per bata / ru (14 m²)",cnt(ha*14/10000)],
+    ["Per bau (7.096,5 m²)",cnt(ha*7096.5/10000)]
+  ];
+  rows.push([`Total untuk ${fmt(areaIn,2)} ${unitName}`,fmt(Math.round(land),0)]);
+  rows.push([`Kebutuhan bibit (+${fmt(sul,1)}% sulam)`,fmt(Math.ceil(land*(1+sul/100)),0)]);
+  const big=fmt(Math.round(ha),0);
+  out.innerHTML=`<div class="res"><div class="cap">Populasi tanaman per hektare</div>
+   <div class="big">${big} <small>tanaman/ha</small></div>
+   <table>${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("")}</table>
+   <div class="steps">${formula}${(perHole!==1||eff!==100)?` × ${fmt(perHole,2)} tanaman/lubang × ${fmt(eff,1)}% efektif`:""}</div>
+   <button type="button" class="cp" id="copy">Salin hasil</button></div>`;
+  lastText=[`Kalkulator Populasi Tanaman (${PATS.find(p=>p[0]===pat)[1]})`,`Populasi: ${big} tanaman/ha`,...rows.map(r=>`${r[0]}: ${r[1]}`),formula].join("\n");
+}
+$("out").addEventListener("click",async e=>{
+  if(e.target.id!=="copy"||!lastText)return;
+  const t=lastText;
+  try{await navigator.clipboard.writeText(t)}catch(_){const a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy")}catch(_){}a.remove()}
+  const b=e.target;b.textContent="Tersalin";setTimeout(()=>{b.textContent="Salin hasil"},1500);
+});
+applyDef();setup();calc();
+</script>
+</body>
+</html>
